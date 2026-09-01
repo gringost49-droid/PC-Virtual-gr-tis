@@ -1,0 +1,49 @@
+name: PC Virtual
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pc-virtual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Atualizar sistema
+        run: |
+          sudo apt update
+          sudo apt upgrade -y
+
+      - name: Instalar área de trabalho
+        run: |
+          sudo apt install -y xfce4 xfce4-goodies
+
+      - name: Instalar programas
+        run: |
+          sudo apt install -y \
+            firefox \
+            curl \
+            wget \
+            git \
+            unzip \
+            p7zip-full \
+            nano
+
+      - name: Criar usuário
+        run: |
+          sudo useradd -m -s /bin/bash virtualpc || true
+          echo "virtualpc:VirtualPC123" | sudo chpasswd
+          sudo usermod -aG sudo virtualpc
+
+      - name: Configurar XFCE
+        run: |
+          sudo -u virtualpc bash -c 'echo "startxfce4" > /home/virtualpc/.xsession'
+          sudo chown virtualpc:virtualpc /home/virtualpc/.xsession
+
+      - name: Verificar instalação
+        run: |
+          echo "PC Virtual preparado!"
+          echo "Usuário: virtualpc"
+          echo "XFCE instalado"
+          echo "Firefox instalado"
+          echo "Ferramentas de download instaladas"
